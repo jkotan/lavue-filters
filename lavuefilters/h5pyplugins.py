@@ -95,7 +95,7 @@ class H5PYdump(object):
         self._h5file.attrs["file_name"] = unicode(self.__filename)
         self._h5file.attrs["file_update_time"] = unicode(self._currenttime())
 
-    def _add_new_entry(self):
+    def _create_entry(self):
         """ add a new scan entry
         """
         self.__grpindex += 1
@@ -141,15 +141,17 @@ class H5PYdump(object):
                self._h5field.dtype != image.dtype:
                 self._h5field = None
 
-    def _create_entry_and_field(self, image):
+    def _create_data_field(self, data):
+        """ create a data field
+        
+        :param data: variable with data
+        :type data: :class:`numpy.ndarray`
         """
-        """
-        self._add_new_entry()
         shape = [0]
-        shape.extend(image.shape)
+        shape.extend(data.shape)
         chunk = [1]
-        chunk.extend(image.shape)
-        dtype = image.dtype
+        chunk.extend(data.shape)
+        dtype = data.dtype
         maxshape = [None] * len(shape)
         self._h5field = self._h5data.create_dataset(
             "data",
@@ -157,33 +159,48 @@ class H5PYdump(object):
             chunks=tuple(chunk),
             dtype=dtype,
             maxshape=tuple(maxshape))
-        self._h5field_name = self._h5data.create_dataset(
-            "data_name",
+
+    def _create_scalar_field(self, name, dtype=None):
+        """ create a string field
+
+        :param name: field name
+        :type name: :obj:`str`
+        :param dtype: field data type
+        :type dtype: :obj:`str`
+        :returns: field object
+        :rtype dtype: :class:`h5py._hl.dataset.Dataset`
+        """
+        dtype = dtype or h5py.special_dtype(vlen=unicode)
+        field = self._h5data.create_dataset(
+            name,
             shape=(0,),
             chunks=(1,),
             dtype=h5py.special_dtype(vlen=unicode),
             maxshape=(None,))
-        self._reopen()
+        return field
 
-    def _append_image(self, image, imagename):
-        """ appends the image
+    def _append_data(self, field, data):
+        """ appends the data
 
-        :param image: numpy array with an image
-        :type image: :class:`numpy.ndarray`
+        :param field: field object
+        :type field: :class:`h5py._hl.dataset.Dataset`
+        :param data: variable with data
+        :type data: :class:`numpy.ndarray`
         """
 
-        new_shape = list(self._h5field.shape)
+        new_shape = list(field.shape)
         new_shape[0] += 1
-        self._h5field.resize(tuple(new_shape))
-        self._h5field[-1, :, :] = np.transpose(image)
-        new_shape = list(self._h5field_name.shape)
-        new_shape[0] += 1
-        self._h5field_name.resize(tuple(new_shape))
-        self._h5field_name[-1] = unicode(imagename)
+        field.resize(tuple(new_shape))
+        if len(new_shape) == 1:
+            field[-1] = data
+        elif len(new_shape) == 1:
+            field[-1, :] = data
+        elif len(new_shape) == 3:
+            field[-1, :, :] = np.transpose(data)
+        elif len(new_shape) == 4:
+            field[-1, :, :, :] = np.swapaxes(data, 0, 1)
         if hasattr(self._h5field, "flush"):
-            self._h5field.flush()
-        if hasattr(self._h5field_name, "flush"):
-            self._h5field_name.flush()
+            field.flush()
 
     def __call__(self, image, imagename, metadata, imagewg):
         """ call method
@@ -204,8 +221,12 @@ class H5PYdump(object):
             self._reset()
         self._check_shape_and_dtype(image)
         if self._h5field is None:
-            self._create_entry_and_field(image)
-        self._append_image(image, imagename)
+            self._create_entry()
+            self._create_data_field(image)
+            self._h5field_name = self._create_scalar_field("data_name")
+            self._reopen()
+        self._append_data(self._h5field, image)
+        self._append_data(self._h5field_name, unicode(imagename))
 
 
 class H5PYdumpdiff(H5PYdump):
@@ -242,6 +263,10 @@ class H5PYdumpdiff(H5PYdump):
                 self._reset()
             self._check_shape_and_dtype(image)
             if self._h5field is None:
-                self._create_entry_and_field(image)
-            self._append_image(image, imagename)
+                self._create_entry()
+                self._create_data_field(image)
+                self._h5field_name = self._create_scalar_field("data_name")
+                self._reopen()
+            self._append_data(self._h5field, image)
+            self._append_data(self._h5field_name, unicode(imagename))
         self.__lastimage = np.array(image)
