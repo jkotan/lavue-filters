@@ -33,7 +33,7 @@ import numpy as np
 
 class H5PYdump(object):
 
-    """ Horizontal gap filter"""
+    """ H5PY image writer plugin"""
 
     def __init__(self, configuration=None):
         """ constructor
@@ -164,7 +164,7 @@ class H5PYdump(object):
 
 class H5PYdumpdiff(H5PYdump):
 
-    """ Horizontal gap filter"""
+    """ H5PY image writer plugin when image differs from previous"""
 
     def __init__(self, configuration=None):
         """ constructor
