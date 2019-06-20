@@ -93,7 +93,6 @@ class H5PYdump(object):
         self.__h5entry = None
         self.__h5data = None
         self.__h5field = None
-        self.__grpindex = 0
         self.__imgindex = 0
 
     def __call__(self, image, imagename, metadata, imagewg):
