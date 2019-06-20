@@ -62,14 +62,32 @@ class H5PYdump(object):
             if configuration \
             else "/tmp/lavueh5pydump.h5"
 
-        self.__grpindex = 0
+        #: (:obj:`int`) group index
+        self.__grpindex = 1
+        #: (:obj:`int`) image index
         self._imgindex = 0
+        #: (:obj:`h5py._hl.file.File`) root object
+        self._h5file = None
+        #: (:obj:`h5py._hl.group.Group`) NXentry group
         self._h5entry = None
+        #: (:obj:`h5py._hl.group.Group`) NXdata group
         self._h5data = None
+        #: (:obj:`h5py._hl.dataset.Dataset`) data field
         self._h5field = None
+        #: (:obj:`h5py._hl.dataset.Dataset`) data_name field
         self._h5field_name = None
-
         self._create_file()
+
+    def initialize(self):
+        """ initialize the filter
+        """
+        self._reset()
+
+    def terminate(self):
+        """ stop filter
+        """
+        if hasattr(self._h5file, "close"):
+            self._h5file.close()
 
     @classmethod
     def _currenttime(cls):
@@ -121,7 +139,8 @@ class H5PYdump(object):
     def _reset(self):
         """  remove the file and create a new one
         """
-        self._h5file.close()
+        if hasattr(self._h5file, "close"):
+            self._h5file.close()
         self._create_file()
         self._h5entry = None
         self._h5data = None
@@ -156,8 +175,10 @@ class H5PYdump(object):
         self._h5field = self._h5data.create_dataset(
             "data",
             shape=tuple(shape),
-            chunks=tuple(chunk),
             dtype=dtype,
+            chunks=tuple(chunk),
+            compression="gzip",
+            compression_opts=2,
             maxshape=tuple(maxshape))
 
     def _create_scalar_field(self, name, dtype=None):
@@ -236,7 +257,7 @@ class H5PYdumpdiff(H5PYdump):
     def __init__(self, configuration=None):
         """ constructor
 
-        :param configuration: file name to dump images and,  max image numbers
+        :param configuration: file name to dump images and, max image numbers
         :type configuration: :obj:`str`
         """
         H5PYdump.__init__(self, configuration)
