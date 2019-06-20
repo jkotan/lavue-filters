@@ -1,3 +1,7 @@
 2019-06-20 Jan Kotanski <jan.kotanski@desy.de>
+	* fix for image shape
+	* tagged as 1.0.1
+
+2019-06-20 Jan Kotanski <jan.kotanski@desy.de>
 	* add H5PYdump and H5PYdumpdiff plugins
 	* tagged as 1.0.0

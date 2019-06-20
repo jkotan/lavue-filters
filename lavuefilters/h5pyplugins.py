@@ -208,7 +208,6 @@ class H5PYdump(object):
         :param data: variable with data
         :type data: :class:`numpy.ndarray`
         """
-
         new_shape = list(field.shape)
         new_shape[0] += 1
         field.resize(tuple(new_shape))
@@ -217,9 +216,9 @@ class H5PYdump(object):
         elif len(new_shape) == 1:
             field[-1, :] = data
         elif len(new_shape) == 3:
-            field[-1, :, :] = np.transpose(data)
+            field[-1, :, :] = data
         elif len(new_shape) == 4:
-            field[-1, :, :, :] = np.swapaxes(data, 0, 1)
+            field[-1, :, :, :] = data
         if hasattr(self._h5field, "flush"):
             field.flush()
 
@@ -237,6 +236,8 @@ class H5PYdump(object):
         :returns: numpy array with an image
         :rtype: :class:`numpy.ndarray` or `None`
         """
+        if len(image.shape) > 1:
+            image = np.swapaxes(image, 0, 1)
         self._imgindex += 1
         if self._maxindex > 0 and self._imgindex >= self._maxindex:
             self._reset()
@@ -277,6 +278,8 @@ class H5PYdumpdiff(H5PYdump):
         :returns: numpy array with an image
         :rtype: :class:`numpy.ndarray` or `None`
         """
+        if len(image.shape) > 1:
+            image = np.swapaxes(image, 0, 1)
         if self.__lastimage is None or \
            not np.array_equal(self.__lastimage, image):
             self._imgindex += 1
