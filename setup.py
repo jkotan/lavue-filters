@@ -73,7 +73,7 @@ install_requires = [
 
 #: (:obj:`dict` <:obj:`str`, `any`>) metadata for distutils
 SETUPDATA = dict(
-    name='lavue',
+    name='lavuefilters',
     version=release,
     description='Live image viewer application for photon science detectors.',
     long_description=read('README.rst'),
