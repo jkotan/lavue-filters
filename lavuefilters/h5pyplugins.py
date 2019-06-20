@@ -43,18 +43,18 @@ class H5PYdump(object):
         """
         try:
             sconf = configuration.split(",")
-            coniguration = sconf[0]
+            configuration = sconf[0]
             maxindex = int(sconf[1])
         except Exception:
             maxindex = 1000
-            
+
         #: (:obj: `int`) maximal image number
         self.__maxindex = maxindex
 
         #: (:obj: `str` >) list of indexes for gap
         self.__filename = configuration \
-                        if configuration \
-                        else "/tmp/lavueh5pydump.h5"
+            if configuration \
+            else "/tmp/lavueh5pydump.h5"
 
         self.__grpindex = 0
         self.__imgindex = 0
@@ -68,7 +68,8 @@ class H5PYdump(object):
         """ add a new scan entry
         """
         self.__grpindex += 1
-        self.__h5entry = self.__h5file.create_group("scan_%s" % self.__grpindex)
+        self.__h5entry = self.__h5file.create_group(
+            "scan_%s" % self.__grpindex)
         self.__h5entry.attrs["NX_class"] = "NXentry"
         self.__h5data = self.__h5entry.create_group("data")
         self.__h5data.attrs["NX_class"] = "NXdata"
@@ -92,9 +93,9 @@ class H5PYdump(object):
         self.__h5entry = None
         self.__h5data = None
         self.__h5field = None
-        self.__grpindex = 0        
-        self.__imgindex = 0        
-    
+        self.__grpindex = 0
+        self.__imgindex = 0
+
     def __call__(self, image, imagename, metadata, imagewg):
         """ call method
 
@@ -110,7 +111,7 @@ class H5PYdump(object):
         :rtype: :class:`numpy.ndarray` or `None`
         """
         self.__imgindex += 1
-        if self.__maxindex > 0 and  self.__imgindex >= self.__maxindex:
+        if self.__maxindex > 0 and self.__imgindex >= self.__maxindex:
             self._reset()
         if self.__h5field is not None:
             if self.__h5field.shape[1:] != image.shape or \
@@ -135,7 +136,6 @@ class H5PYdump(object):
         new_shape = list(self.__h5field.shape)
         new_shape[0] += 1
         self.__h5field.resize(tuple(new_shape))
-        self.__h5field[-1,:,:] = np.transpose(image)
+        self.__h5field[-1, :, :] = np.transpose(image)
         if hasattr(self.__h5field, "flush"):
             self.__h5field.flush()
-

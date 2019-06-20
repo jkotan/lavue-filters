@@ -29,10 +29,10 @@ import codecs
 import os
 import sys
 from setuptools import setup
-from setuptools.command.build_py import build_py
-from distutils.command.clean import clean
-from distutils.util import get_platform
-import shutil
+# from setuptools.command.build_py import build_py
+# from distutils.command.clean import clean
+# from distutils.util import get_platform
+# import shutil
 
 from sphinx.setup_command import BuildDoc
 
@@ -64,10 +64,10 @@ needs_pytest = set(['test']).intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if needs_pytest else []
 
 install_requires = [
-#    'pyqtgraph>=0.10.0',
-#    'numpy>1.6.0',
-#    'pyzmq',
-#    'scipy',
+    #    'pyqtgraph>=0.10.0',
+    #    'numpy>1.6.0',
+    #    'pyzmq',
+    #    'scipy',
 ]
 
 
