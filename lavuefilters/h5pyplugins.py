@@ -22,7 +22,7 @@
 #     Jan Kotanski <jan.kotanski@desy.de>
 #
 
-""" NeXus writer plugins """
+""" NeXus h5py writer plugins """
 
 import h5py
 import numpy as np
@@ -46,7 +46,7 @@ class H5PYdump(object):
             coniguration = sconf[0]
             maxindex = int(sconf[1])
         except Exception:
-            maxindex = 100
+            maxindex = 1000
             
         #: (:obj: `int`) maximal image number
         self.__maxindex = maxindex
@@ -65,6 +65,8 @@ class H5PYdump(object):
         self.__h5file = h5py.File(self.__filename, 'w', libver='latest')
 
     def _add_new_entry(self):
+        """ add a new scan entry
+        """
         self.__grpindex += 1
         self.__h5entry = self.__h5file.create_group("scan_%s" % self.__grpindex)
         self.__h5entry.attrs["NX_class"] = "NXentry"
@@ -73,6 +75,8 @@ class H5PYdump(object):
         self.__h5field = None
 
     def _reopen(self):
+        """  reopen the file
+        """
         self.__h5file.close()
         self.__h5file = h5py.File(self.__filename, 'r+', libver='latest')
         self.__h5file.swmr_mode = True
@@ -81,6 +85,8 @@ class H5PYdump(object):
         self.__h5field = self.__h5data.get("data")
 
     def _reset(self):
+        """  remove the file and create a new one
+        """
         self.__h5file.close()
         self.__h5file = h5py.File(self.__filename, 'w', libver='latest')
         self.__h5entry = None
