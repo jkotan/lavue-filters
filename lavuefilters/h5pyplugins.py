@@ -67,6 +67,7 @@ class H5PYdump(object):
         self._h5entry = None
         self._h5data = None
         self._h5field = None
+        self._h5field_name = None
 
         self._create_file()
 
@@ -104,6 +105,7 @@ class H5PYdump(object):
         self._h5data = self._h5entry.create_group("data")
         self._h5data.attrs["NX_class"] = "NXdata"
         self._h5field = None
+        self._h5field_name = None
 
     def _reopen(self):
         """  reopen the file
@@ -114,6 +116,7 @@ class H5PYdump(object):
         self._h5entry = self._h5file.get("scan_%s" % self.__grpindex)
         self._h5data = self._h5entry.get("data")
         self._h5field = self._h5data.get("data")
+        self._h5field_name = self._h5data.get("data_name")
 
     def _reset(self):
         """  remove the file and create a new one
@@ -123,6 +126,7 @@ class H5PYdump(object):
         self._h5entry = None
         self._h5data = None
         self._h5field = None
+        self._h5field_name = None
         self._imgindex = 0
         self.__grpindex -= 1
 
@@ -153,9 +157,15 @@ class H5PYdump(object):
             chunks=tuple(chunk),
             dtype=dtype,
             maxshape=tuple(maxshape))
+        self._h5field_name = self._h5data.create_dataset(
+            "data_name",
+            shape=(0,),
+            chunks=(1,),
+            dtype=h5py.special_dtype(vlen=unicode),
+            maxshape=(None,))
         self._reopen()
 
-    def _append_image(self, image):
+    def _append_image(self, image, imagename):
         """ appends the image
 
         :param image: numpy array with an image
@@ -166,8 +176,14 @@ class H5PYdump(object):
         new_shape[0] += 1
         self._h5field.resize(tuple(new_shape))
         self._h5field[-1, :, :] = np.transpose(image)
+        new_shape = list(self._h5field_name.shape)
+        new_shape[0] += 1
+        self._h5field_name.resize(tuple(new_shape))
+        self._h5field_name[-1] = unicode(imagename)
         if hasattr(self._h5field, "flush"):
             self._h5field.flush()
+        if hasattr(self._h5field_name, "flush"):
+            self._h5field_name.flush()
 
     def __call__(self, image, imagename, metadata, imagewg):
         """ call method
@@ -189,7 +205,7 @@ class H5PYdump(object):
         self._check_shape_and_dtype(image)
         if self._h5field is None:
             self._create_entry_and_field(image)
-        self._append_image(image)
+        self._append_image(image, imagename)
 
 
 class H5PYdumpdiff(H5PYdump):
@@ -227,5 +243,5 @@ class H5PYdumpdiff(H5PYdump):
             self._check_shape_and_dtype(image)
             if self._h5field is None:
                 self._create_entry_and_field(image)
-            self._append_image(image)
+            self._append_image(image, imagename)
         self.__lastimage = np.array(image)
