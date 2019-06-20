@@ -143,7 +143,7 @@ class H5PYdump(object):
 
     def _create_data_field(self, data):
         """ create a data field
-        
+
         :param data: variable with data
         :type data: :class:`numpy.ndarray`
         """
