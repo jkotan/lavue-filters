@@ -26,9 +26,15 @@
 
 import h5py
 import numpy as np
+import sys
+import time
+import pytz
+import datetime
 
-# import json
-# from scipy import ndimage
+if sys.version_info > (3,):
+    unicode = str
+else:
+    bytes = str
 
 
 class H5PYdump(object):
@@ -62,7 +68,31 @@ class H5PYdump(object):
         self._h5data = None
         self._h5field = None
 
+        self._create_file()
+
+    @classmethod
+    def _currenttime(cls):
+        """ returns current time string
+
+        :returns: current time
+        :rtype: :obj:`str`
+        """
+        tzone = time.tzname[0]
+        tz = pytz.timezone(tzone)
+        fmt = '%Y-%m-%dT%H:%M:%S.%f%z'
+        starttime = tz.localize(datetime.datetime.now())
+        return str(starttime.strftime(fmt))
+
+    def _create_file(self):
+        """ creates a new file
+        """
         self._h5file = h5py.File(self.__filename, 'w', libver='latest')
+        self._h5file.attrs["file_time"] = unicode(self._currenttime())
+        self._h5file.attrs["HDF5_version"] = u""
+        self._h5file.attrs["NX_class"] = u"NXroot"
+        self._h5file.attrs["NeXus_version"] = u"4.3.0"
+        self._h5file.attrs["file_name"] = unicode(self.__filename)
+        self._h5file.attrs["file_update_time"] = unicode(self._currenttime())
 
     def _add_new_entry(self):
         """ add a new scan entry
@@ -89,7 +119,7 @@ class H5PYdump(object):
         """  remove the file and create a new one
         """
         self._h5file.close()
-        self._h5file = h5py.File(self.__filename, 'w', libver='latest')
+        self._create_file()
         self._h5entry = None
         self._h5data = None
         self._h5field = None
