@@ -22,7 +22,7 @@
 #     Jan Kotanski <jan.kotanski@desy.de>
 #
 
-""" Live Viewer nexus plugin """
+""" Live Viewer nexus plugins """
 
 __version__ = "1.0.0"
 

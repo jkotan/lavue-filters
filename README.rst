@@ -1,4 +1,4 @@
-LaVue - Live Image Viewer NeXus Writer plugin 
+LaVue - Live Image Viewer NeXus Writer plugins
 ==============================================
 
 Author: Jan Kotański <jan.kotanski at desy.de>
