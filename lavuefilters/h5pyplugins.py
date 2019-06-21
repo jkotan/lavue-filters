@@ -30,6 +30,8 @@ import sys
 import time
 import pytz
 import datetime
+import os
+import socket
 
 if sys.version_info > (3,):
     unicode = str
@@ -60,7 +62,12 @@ class H5PYdump(object):
         #: (:obj: `str` >) list of indexes for gap
         self.__filename = configuration \
             if configuration \
-            else "/tmp/lavueh5pydump.h5"
+            else "/tmp/lavueh5pydump.nxs"
+        sfn = self.__filename.split(".")
+        if len(sfn) > 1:
+            self.__oldfilename = ".".join(sfn[:-1]) + ".1." + sfn[-1]
+        else:
+            self.__oldfilename = ".".join(sfn[:-1]) + ".1"
 
         #: (:obj:`int`) group index
         self.__grpindex = 1
@@ -77,17 +84,28 @@ class H5PYdump(object):
         #: (:obj:`h5py._hl.dataset.Dataset`) data_name field
         self._h5field_name = None
         self._create_file()
+        #: (:obj:`bool`) fist time init flag
+        self.__firsttime = True
 
     def initialize(self):
         """ initialize the filter
         """
-        self._reset()
+        if self.__firsttime:
+            self.__firsttime = False
+        else:
+            self._reset()
 
     def terminate(self):
         """ stop filter
         """
         if hasattr(self._h5file, "close"):
+            if self._h5entry is not None:
+                self._h5entry.create_dataset(
+                    "end_time", shape=[1], chunks=None,
+                    dtype=h5py.special_dtype(vlen=unicode),
+                    maxshape=(None,), data=unicode(self._currenttime()))
             self._h5file.close()
+            self._h5file = None
 
     @classmethod
     def _currenttime(cls):
@@ -105,6 +123,8 @@ class H5PYdump(object):
     def _create_file(self):
         """ creates a new file
         """
+        if os.path.isfile(self.__filename):
+            os.rename(self.__filename, self.__oldfilename)
         self._h5file = h5py.File(self.__filename, 'w', libver='latest')
         self._h5file.attrs["file_time"] = unicode(self._currenttime())
         self._h5file.attrs["HDF5_version"] = u""
@@ -124,6 +144,20 @@ class H5PYdump(object):
         self._h5data.attrs["NX_class"] = "NXdata"
         self._h5field = None
         self._h5field_name = None
+        starttime = self._currenttime()
+        self._h5entry.create_dataset(
+            "start_time", shape=[1], chunks=None,
+            dtype=h5py.special_dtype(vlen=unicode),
+            maxshape=(None,), data=unicode(starttime))
+        self._h5entry.create_dataset(
+            "title", shape=[1], chunks=None,
+            dtype=h5py.special_dtype(vlen=unicode),
+            maxshape=(None,), data=unicode("LaVue NeXus dump"))
+        self._h5entry.create_dataset(
+            "experiment_identifier", shape=[1], chunks=None,
+            dtype=h5py.special_dtype(vlen=unicode),
+            maxshape=(None,),
+            data=unicode("%s@%s" % (starttime, socket.gethostname())))
 
     def _reopen(self):
         """  reopen the file
@@ -159,6 +193,11 @@ class H5PYdump(object):
             if self._h5field.shape[1:] != image.shape or \
                self._h5field.dtype != image.dtype:
                 self._h5field = None
+                if self._h5entry is not None:
+                    self._h5entry.create_dataset(
+                        "end_time", shape=[1], chunks=None,
+                        dtype=h5py.special_dtype(vlen=unicode),
+                        maxshape=(None,), data=unicode(self._currenttime()))
 
     def _create_data_field(self, data):
         """ create a data field
@@ -249,6 +288,9 @@ class H5PYdump(object):
             self._reopen()
         self._append_data(self._h5field, image)
         self._append_data(self._h5field_name, unicode(imagename))
+
+    def __del__(self):
+        self.terminate()
 
 
 class H5PYdumpdiff(H5PYdump):
