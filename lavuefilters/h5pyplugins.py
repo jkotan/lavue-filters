@@ -83,17 +83,11 @@ class H5PYdump(object):
         self._h5field = None
         #: (:obj:`h5py._hl.dataset.Dataset`) data_name field
         self._h5field_name = None
-        self._create_file()
-        #: (:obj:`bool`) fist time init flag
-        self.__firsttime = True
 
     def initialize(self):
         """ initialize the filter
         """
-        if self.__firsttime:
-            self.__firsttime = False
-        else:
-            self._reset()
+        self._reset()
 
     def terminate(self):
         """ stop filter

@@ -1,4 +1,8 @@
 2019-06-21 Jan Kotanski <jan.kotanski@desy.de>
+	* do not rename nexus files in contructor
+	* tagged as 1.1.1
+
+2019-06-21 Jan Kotanski <jan.kotanski@desy.de>
 	* add start_time, end_time, title and identifier
 	* make a copy on new file creation
 	* tagged as 1.1.0
