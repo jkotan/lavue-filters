@@ -24,14 +24,8 @@
 
 """ NeXus h5py writer plugins """
 
-import h5py
 import numpy as np
 import sys
-import time
-import pytz
-import datetime
-import os
-import socket
 
 if sys.version_info > (3,):
     unicode = str
@@ -50,13 +44,13 @@ class HistoryDump(object):
         :type configuration: :obj:`str`
         """
         try:
-            self._maxindex = max(int(configuration), 1)
+            self._maxindex = max(int(configuration), 2)
         except Exception:
             self._maxindex = 10
 
         #: (:class:`numpy.ndarray`) image stack
         self._imagestack = None
-        self._current = 0
+        self._current = 1
         self._lastimage = None
 
     def initialize(self):
@@ -64,14 +58,14 @@ class HistoryDump(object):
         """
         self._imagestack = None
         self._lastimage = None
-        self._current = 0
+        self._current = 1
 
     def terminate(self):
         """ stop filter
         """
         self._imagestack = None
         self._lastimage = None
-        self._current = 0
+        self._current = 1
 
     def __call__(self, image, imagename, metadata, imagewg):
         """ call method
@@ -101,19 +95,22 @@ class HistoryDump(object):
                 newshape = np.concatenate(([self._maxindex], list(shape)))
                 self._imagestack = np.zeros(dtype=dtype, shape=newshape)
 
-            if self._current  >= self._maxindex:
-                self._current = 0
+            if self._current >= self._maxindex:
+                self._current = 1
             lshape = len(self._imagestack.shape)
             if lshape == 3:
                 self._imagestack[self._current, :, :] = image
+                self._imagestack[0, :, :] = image
             elif lshape == 2:
                 self._imagestack[self._current, :] = image
+                self._imagestack[0, :] = image
             elif lshape == 1:
                 self._imagestack[self._current] = image
+                self._imagestack[0] = image
 
             self._current += 1
             self._lastimage = image
-            
+
         if self._imagestack is not None:
             return self._imagestack
 
