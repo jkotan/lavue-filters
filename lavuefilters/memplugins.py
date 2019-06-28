@@ -22,7 +22,7 @@
 #     Jan Kotanski <jan.kotanski@desy.de>
 #
 
-""" NeXus h5py writer plugins """
+""" History memory plugins """
 
 import numpy as np
 import sys
