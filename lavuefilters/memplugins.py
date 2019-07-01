@@ -52,6 +52,7 @@ class HistoryDump(object):
         self._imagestack = None
         self._current = 1
         self._lastimage = None
+        self._first = True
 
     def initialize(self):
         """ initialize the filter
@@ -59,6 +60,7 @@ class HistoryDump(object):
         self._imagestack = None
         self._lastimage = None
         self._current = 1
+        self._first = True
 
     def terminate(self):
         """ stop filter
@@ -81,6 +83,7 @@ class HistoryDump(object):
         :returns: numpy array with an image
         :rtype: :class:`numpy.ndarray` or `None`
         """
+        mdata = {}
         if self._lastimage is None or \
            not np.array_equal(self._lastimage, image):
             shape = image.shape
@@ -111,8 +114,18 @@ class HistoryDump(object):
             self._current += 1
             self._lastimage = image
 
+            if self._first:
+                cblbl = {key: None for key in range(self._maxindex)}
+            else:
+                cblbl = {}
+            mdata["channellabels"] = cblbl
+            cblbl[0] = imagename
+            cblbl[self._current - 1] = "%s: %s" % (
+                self._current - 1, imagename)
+            self._first = False
+
         if self._imagestack is not None:
-            return self._imagestack
+            return (self._imagestack, mdata)
 
     def __del__(self):
         self.terminate()
