@@ -1,4 +1,8 @@
 2019-07-01 Jan Kotanski <jan.kotanski@desy.de>
+	* change the name to the last image
+	* tagged as 1.2.1
+
+2019-07-01 Jan Kotanski <jan.kotanski@desy.de>
 	* add HistoryDump filter
 	* requires LaVue v2.13.0 or above
 	* tagged as 1.2.0

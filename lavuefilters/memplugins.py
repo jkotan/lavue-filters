@@ -119,7 +119,7 @@ class HistoryDump(object):
             else:
                 cblbl = {}
             mdata["channellabels"] = cblbl
-            cblbl[0] = imagename
+            cblbl[0] = "0: the last image"
             cblbl[self._current - 1] = "%s: %s" % (
                 self._current - 1, imagename)
             self._first = False
