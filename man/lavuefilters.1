@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "LAVUEFILTERS" "1" "Jun 20, 2019" "1.0" "lavuefilters"
+.TH "LAVUEFILTERS" "1" "Jul 01, 2019" "1.2" "lavuefilters"
 .SH NAME
 lavuefilters \- lavuefilters Documentation
 .
@@ -59,9 +59,28 @@ Bases: \fI\%lavuefilters.h5pyplugins.H5PYdump\fP
 .sp
 H5PY image writer plugin when image differs from previous
 .UNINDENT
+.sp
+History memory plugins
+.INDENT 0.0
+.TP
+.B class lavuefilters.memplugins.HistoryDump(configuration=None)
+Bases: \fBobject\fP
+.sp
+History Dump
+.INDENT 7.0
+.TP
+.B initialize()
+initialize the filter
+.UNINDENT
+.INDENT 7.0
+.TP
+.B terminate()
+stop filter
+.UNINDENT
+.UNINDENT
 .SS Module contents
 .sp
-Live Viewer nexus plugins
+Live Viewer plugin examples
 .INDENT 0.0
 .IP \(bu 2
 genindex
