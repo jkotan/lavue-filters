@@ -22,8 +22,8 @@
 #     Jan Kotanski <jan.kotanski@desy.de>
 #
 
-""" Live Viewer nexus plugins """
+""" Live Viewer plugin examples """
 
-__version__ = "1.1.1"
+__version__ = "1.2.0"
 
 __all__ = ["__version__"]

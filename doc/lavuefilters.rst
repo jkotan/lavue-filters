@@ -12,6 +12,11 @@ lavuefilters.h5pyplugins module
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: lavuefilters.memplugins
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------
