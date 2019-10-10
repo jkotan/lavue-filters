@@ -1,3 +1,7 @@
+2019-10-10 Jan Kotanski <jan.kotanski@desy.de>
+	* update setup.py for pip
+	* tagged as 1.2.2
+
 2019-07-01 Jan Kotanski <jan.kotanski@desy.de>
 	* change the name to the last image
 	* tagged as 1.2.1

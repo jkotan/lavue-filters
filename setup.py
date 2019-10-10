@@ -34,7 +34,10 @@ from setuptools import setup
 # from distutils.util import get_platform
 # import shutil
 
-from sphinx.setup_command import BuildDoc
+try:
+    from sphinx.setup_command import BuildDoc
+except Exception:
+    BuildDoc = None
 
 
 def read(fname):
@@ -64,10 +67,10 @@ needs_pytest = set(['test']).intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if needs_pytest else []
 
 install_requires = [
-    #    'pyqtgraph>=0.10.0',
-    #    'numpy>1.6.0',
-    #    'pyzmq',
-    #    'scipy',
+    'numpy>1.6.0',
+    'scipy',
+    'h5py',
+    # 'lavue',
 ]
 
 
@@ -75,15 +78,17 @@ install_requires = [
 SETUPDATA = dict(
     name='lavuefilters',
     version=release,
-    description='Live image viewer application for photon science detectors.',
+    description='Live image viewer application for photon science detectors: '
+    'plugins',
     long_description=read('README.rst'),
+    long_description_content_type='text/x-rst',
     install_requires=install_requires,
     url='https://github.com/jkotan/lavuefilters',
-    author='J.Kotanski',
+    author='Jan Kotanski',
     author_email='jan.kotanski@desy.de',
     license='GPLv2',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering :: Physics',
         'Topic :: Software Development :: Libraries :: Python Modules',
@@ -92,6 +97,8 @@ SETUPDATA = dict(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
     keywords='live viewer nexus writer plugin',
     packages=[NAME],

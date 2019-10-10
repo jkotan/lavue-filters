@@ -24,6 +24,6 @@
 
 """ Live Viewer plugin examples """
 
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 
 __all__ = ["__version__"]
