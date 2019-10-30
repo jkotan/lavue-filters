@@ -1,3 +1,7 @@
+2019-10-30 Jan Kotanski <jan.kotanski@desy.de>
+	* fix for memory buffer size
+	* tagged as 1.2.3
+
 2019-10-10 Jan Kotanski <jan.kotanski@desy.de>
 	* update setup.py for pip
 	* tagged as 1.2.2

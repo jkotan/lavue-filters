@@ -95,10 +95,10 @@ class HistoryDump(object):
                     self._imagestack = None
 
             if self._imagestack is None:
-                newshape = np.concatenate(([self._maxindex], list(shape)))
+                newshape = np.concatenate(([self._maxindex + 1], list(shape)))
                 self._imagestack = np.zeros(dtype=dtype, shape=newshape)
 
-            if self._current >= self._maxindex:
+            if self._current > self._maxindex:
                 self._current = 1
             lshape = len(self._imagestack.shape)
             if lshape == 3:
@@ -119,6 +119,7 @@ class HistoryDump(object):
             else:
                 cblbl = {}
             mdata["channellabels"] = cblbl
+            mdata["skipfirst"] = True
             cblbl[0] = "0: the last image"
             cblbl[self._current - 1] = "%s: %s" % (
                 self._current - 1, imagename)
