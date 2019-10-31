@@ -44,7 +44,7 @@ class HistoryDump(object):
         :type configuration: :obj:`str`
         """
         try:
-            self._maxindex = max(int(configuration), 2)
+            self._maxindex = max(int(configuration), 1)
         except Exception:
             self._maxindex = 10
 
