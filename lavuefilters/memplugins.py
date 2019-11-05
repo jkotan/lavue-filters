@@ -93,6 +93,8 @@ class HistoryDump(object):
                 if self._imagestack.shape[1:] != shape or \
                    self._imagestack.dtype != dtype:
                     self._imagestack = None
+                    self._first = True
+                    self._current = 1
 
             if self._imagestack is None:
                 newshape = np.concatenate(([self._maxindex + 1], list(shape)))
@@ -115,7 +117,8 @@ class HistoryDump(object):
             self._lastimage = image
 
             if self._first:
-                cblbl = {key: None for key in range(self._maxindex)}
+                cblbl = {key: "%s:" % key
+                         for key in range(self._maxindex + 1)}
             else:
                 cblbl = {}
             mdata["channellabels"] = cblbl
