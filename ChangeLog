@@ -1,3 +1,7 @@
+2019-11-05 Jan Kotanski <jan.kotanski@desy.de>
+	* fix for reseting memory buffer
+	* tagged as 1.2.4
+
 2019-10-30 Jan Kotanski <jan.kotanski@desy.de>
 	* fix for memory buffer size
 	* tagged as 1.2.3
