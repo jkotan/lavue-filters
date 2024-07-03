@@ -28,7 +28,6 @@ import h5py
 import numpy as np
 import sys
 import time
-import pytz
 import datetime
 import os
 import socket
@@ -109,9 +108,20 @@ class H5PYdump(object):
         :rtype: :obj:`str`
         """
         tzone = time.tzname[0]
-        tz = pytz.timezone(tzone)
         fmt = '%Y-%m-%dT%H:%M:%S.%f%z'
-        starttime = tz.localize(datetime.datetime.now())
+        try:
+            if sys.version_info >= (3, 9):
+                import zoneinfo
+                tz = zoneinfo.ZoneInfo(tzone)
+                starttime = datetime.datetime.now().replace(tzinfo=tz)
+            else:
+                import pytz
+                tz = pytz.timezone(tzone)
+                starttime = tz.localize(datetime.datetime.now())
+        except Exception:
+            import tzlocal
+            tz = tzlocal.get_localzone()
+            starttime = datetime.datetime.now().replace(tzinfo=tz)
         return str(starttime.strftime(fmt))
 
     def _create_file(self):
