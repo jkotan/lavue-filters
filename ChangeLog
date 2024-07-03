@@ -1,3 +1,7 @@
+2024-07-03 Jan Kotanski <jan.kotanski@desy.de>
+	* use zoneinfo if available
+	* tagged as 1.2.5
+
 2019-11-05 Jan Kotanski <jan.kotanski@desy.de>
 	* fix for reseting memory buffer
 	* tagged as 1.2.4
